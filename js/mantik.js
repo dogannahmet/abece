@@ -112,6 +112,13 @@ function yeniOyun(rastgele = Math.random) {
   return { tahta, puan: 0, kazandi: false, bitti: false };
 }
 
+// Doğrulanmış kayıttan (depo.js durumOku) oyun durumu kurar. Tahta kopyalanır;
+// bitti, kayıtta tutulmaz, tahtadan yeniden hesaplanır.
+function durumdanOyunKur(kayit) {
+  const tahta = kayit.tahta.map((satir) => satir.slice());
+  return { tahta, puan: kayit.puan, kazandi: kayit.kazanmaBildirildi, bitti: bittiMi(tahta) };
+}
+
 // Bir hamle yapar ve durumu günceller. Hiçbir taş oynamadıysa hiçbir şey olmaz.
 // Dönüş: { hareket, kazanmaYeni, hareketler, yeniTas }
 // (kazanma sadece ilk H'de bir kez bildirilir; yeniTas yeni düşen taşın hücre indeksi)
@@ -134,6 +141,6 @@ function hamleYap(durum, yon, rastgele = Math.random) {
 // Node'da test için dışa aktar; tarayıcıda module yoktur, atlanır.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
-    BOYUT, ASAMA_SAYISI, bosTahta, kaydir, yeniTasEkle, bittiMi, yeniOyun, hamleYap,
+    BOYUT, ASAMA_SAYISI, bosTahta, kaydir, yeniTasEkle, bittiMi, yeniOyun, durumdanOyunKur, hamleYap,
   };
 }

@@ -289,5 +289,32 @@ test("hareketler kaydır'ın girdisini değiştirmez", () => {
   assert.strictEqual(JSON.stringify(t), once);
 });
 
+console.log("Kayıttan oyun kurma");
+test("kayıttan durum kurulur: tahta, puan, kazandi", () => {
+  const kayit = { surum: 1, tahta: [[1, 2, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 3]], puan: 44, kazanmaBildirildi: true };
+  const d = M.durumdanOyunKur(kayit);
+  assert.deepStrictEqual(d.tahta, kayit.tahta);
+  assert.strictEqual(d.puan, 44);
+  assert.strictEqual(d.kazandi, true);
+  assert.strictEqual(d.bitti, false);
+});
+test("kayıttan kurulan tahta kopyadır", () => {
+  const kayit = { surum: 1, tahta: [[1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], puan: 0, kazanmaBildirildi: false };
+  const d = M.durumdanOyunKur(kayit);
+  d.tahta[0][0] = 5;
+  assert.strictEqual(kayit.tahta[0][0], 1);
+});
+test("kilitli tahta kaydı bitti=true çıkar", () => {
+  const kayit = { surum: 1, tahta: kilitli.map((s) => s.slice()), puan: 10, kazanmaBildirildi: false };
+  assert.strictEqual(M.durumdanOyunKur(kayit).bitti, true);
+});
+test("kayıttan kurulan oyunda hamle çalışır", () => {
+  const kayit = { surum: 1, tahta: [[1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], puan: 5, kazanmaBildirildi: false };
+  const d = M.durumdanOyunKur(kayit);
+  M.hamleYap(d, "sol", sabit(0, 0));
+  assert.strictEqual(d.tahta[0][0], 2);
+  assert.strictEqual(d.puan, 9);
+});
+
 console.log("\n" + gecen + " geçti, " + kalan + " kaldı");
 process.exit(kalan ? 1 : 0);
