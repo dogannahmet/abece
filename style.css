@@ -62,10 +62,13 @@ button {
 button:focus-visible { outline: 3px solid var(--kenar-a); outline-offset: 2px; }
 
 .tahta {
+  --aralik: 8px;
+  --kayma: 120ms; /* js/ekran.js içindeki KAYMA_MS ile aynı */
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 8px;
+  gap: var(--aralik);
+  padding: var(--aralik);
   border-radius: 12px;
   background: var(--tahta);
   touch-action: none; /* kaydırırken sayfa kaymasın */
@@ -101,3 +104,43 @@ button:focus-visible { outline: 3px solid var(--kenar-a); outline-offset: 2px; }
 
 .mesaj { min-height: 1.5em; margin: 12px 0 0; font-weight: 700; }
 .yardim { margin: 8px 0 0; color: var(--metin-yumusak); line-height: 1.4; }
+
+/* Taşlar: sabit konumlu, transform ile yerleşir; hücre boyutu tahta genişliğinden hesaplanır */
+.katman {
+  position: absolute;
+  inset: var(--aralik);
+  pointer-events: none;
+}
+.tas-yer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc((100% - 3 * var(--aralik)) / 4);
+  aspect-ratio: 1;
+  /* translate içindeki % taşın kendi boyutudur: bir hücre + aralık */
+  transform: translate(calc(var(--c) * (100% + var(--aralik))), calc(var(--r) * (100% + var(--aralik))));
+  transition: transform var(--kayma) ease-out;
+}
+.tas-yer > .hucre {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+@keyframes zipla {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes belir {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+.zipla { animation: zipla 140ms ease-out; }
+.belir { animation: belir var(--kayma) ease-out var(--kayma) backwards; } /* kayma bitince belirir */
+
+/* Hareket azaltma açıksa animasyon yok, taşlar anında yer değiştirir */
+@media (prefers-reduced-motion: reduce) {
+  .tas-yer { transition: none; }
+  .zipla, .belir { animation: none; }
+}
