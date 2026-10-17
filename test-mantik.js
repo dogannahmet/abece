@@ -198,5 +198,96 @@ test("bitmiş oyunda hamle işlemez", () => {
   assert.strictEqual(M.hamleYap(durum, "sol").hareket, false);
 });
 
+console.log("Hareketler listesi");
+// Karar: hareket etmeyen taş da listede, kaynak = hedef. Hücre indeksi = satır * 4 + sütun.
+const bul = (liste, kaynak) => liste.find((h) => h.kaynak === kaynak);
+test("sola kayma: 3 -> 0, birleşmedi", () => {
+  const t = [[0, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  assert.deepStrictEqual(M.kaydir(t, "sol").hareketler, [{ kaynak: 3, hedef: 0, birlesti: false }]);
+});
+test("birleşen iki taşın hedefi aynı ve ikisi de birlesti=true", () => {
+  const t = [[1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const h = M.kaydir(t, "sol").hareketler;
+  assert.strictEqual(h.length, 2);
+  assert.deepStrictEqual(bul(h, 0), { kaynak: 0, hedef: 0, birlesti: true });
+  assert.deepStrictEqual(bul(h, 1), { kaynak: 1, hedef: 0, birlesti: true });
+});
+test("A A A A: hedefler 0,0,1,1 (zincirleme yok)", () => {
+  const t = [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const h = M.kaydir(t, "sol").hareketler;
+  assert.deepStrictEqual(h.map((x) => x.hedef), [0, 0, 1, 1]);
+  assert.ok(h.every((x) => x.birlesti));
+});
+test("B A A: B yerinde, A'lar 1'e birleşir", () => {
+  const t = [[2, 1, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const h = M.kaydir(t, "sol").hareketler;
+  assert.deepStrictEqual(bul(h, 0), { kaynak: 0, hedef: 0, birlesti: false });
+  assert.deepStrictEqual(bul(h, 1), { kaynak: 1, hedef: 1, birlesti: true });
+  assert.deepStrictEqual(bul(h, 2), { kaynak: 2, hedef: 1, birlesti: true });
+});
+test("A A A: ilk çift birleşir, üçüncü taş yanına gelir ve birleşmez", () => {
+  const t = [[1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const h = M.kaydir(t, "sol").hareketler;
+  assert.deepStrictEqual(bul(h, 2), { kaynak: 2, hedef: 1, birlesti: false });
+});
+test("sağa birleşme: iki taş da 3'e gider", () => {
+  const t = [[0, 0, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const h = M.kaydir(t, "sag").hareketler;
+  assert.deepStrictEqual(h.map((x) => x.hedef), [3, 3]);
+});
+test("dört yön: tek taş (indeks 5) duvara gider", () => {
+  const t = M.bosTahta();
+  t[1][1] = 3;
+  const hedef = (yon) => M.kaydir(t, yon).hareketler[0].hedef;
+  assert.strictEqual(hedef("sol"), 4);
+  assert.strictEqual(hedef("sag"), 7);
+  assert.strictEqual(hedef("yukari"), 1);
+  assert.strictEqual(hedef("asagi"), 13);
+});
+test("her taş için tam bir kayıt var", () => {
+  const t = [[1, 0, 2, 2], [0, 3, 0, 0], [4, 4, 0, 1], [0, 0, 0, 5]];
+  const taslar = t.flat().filter((x) => x !== 0).length;
+  for (const yon of ["sol", "sag", "yukari", "asagi"]) {
+    const h = M.kaydir(t, yon).hareketler;
+    assert.strictEqual(h.length, taslar);
+    assert.strictEqual(new Set(h.map((x) => x.kaynak)).size, taslar);
+  }
+});
+test("hareketsiz hamle: kaynak = hedef, birlesti=false", () => {
+  const t = [[1, 2, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const s = M.kaydir(t, "sol");
+  assert.strictEqual(s.hareket, false);
+  assert.ok(s.hareketler.every((h) => h.kaynak === h.hedef && !h.birlesti));
+});
+test("hareketsiz hamlede hamleYap boş liste ve yeniTas=null döner", () => {
+  const durum = { tahta: [[1, 2, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], puan: 0, kazandi: false, bitti: false };
+  const s = M.hamleYap(durum, "sol", sabit(0));
+  assert.deepStrictEqual(s.hareketler, []);
+  assert.strictEqual(s.yeniTas, null);
+});
+test("H ile H: yerinde kalır, birleşmez", () => {
+  const t = [[H, H, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const h = M.kaydir(t, "sol").hareketler;
+  assert.ok(h.every((x) => x.kaynak === x.hedef && !x.birlesti));
+});
+test("yeni taşın hücre indeksi sonuçta var ve tahtada o hücre dolu", () => {
+  const durum = { tahta: [[0, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], puan: 0, kazandi: false, bitti: false };
+  const s = M.hamleYap(durum, "sol", sabit(0, 0)); // ilk boş hücre: indeks 1
+  assert.strictEqual(s.yeniTas, 1);
+  assert.strictEqual(durum.tahta[0][1], 1);
+});
+test("yeni taş, kaydırma sonrası boş olan bir hücreye düşer", () => {
+  const durum = { tahta: [[0, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], puan: 0, kazandi: false, bitti: false };
+  const s = M.hamleYap(durum, "sol", sabit(0.99, 0));
+  assert.strictEqual(s.yeniTas, 15);
+  assert.strictEqual(durum.tahta[3][3], 1);
+});
+test("hareketler kaydır'ın girdisini değiştirmez", () => {
+  const t = [[1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const once = JSON.stringify(t);
+  M.kaydir(t, "sol");
+  assert.strictEqual(JSON.stringify(t), once);
+});
+
 console.log("\n" + gecen + " geçti, " + kalan + " kaldı");
 process.exit(kalan ? 1 : 0);
