@@ -20,7 +20,7 @@ Kullanıcı onayı olmadan değiştirilmez.
 
 ## Dosyalar
 - `js/mantik.js` kurallar, `js/ekran.js` çizim, `js/oyun.js` bağlantı (klavye + dokunmatik).
-- `js/depo.js` en yüksek skor (localStorage, anahtar `abeceEnYuksekSkor`). Depolama dışarıdan verilir; hata olursa skor bellekte tutulur. Oyun kurallarını bilmez.
+- `js/depo.js` en yüksek skor (localStorage, anahtar `abeceEnYuksekSkor`) ve oyun kaydı (anahtar `abeceOyunDurumu`). Depolama dışarıdan verilir; hata olursa skor bellekte tutulur, kayıt sessizce atlanır. Oyun kurallarını bilmez (sadece `BOYUT` ve `ASAMA_SAYISI` sabitlerini okur).
 - `js/girdi.js` `yonBul(dx, dy, esik)`: kaydırma yönünü bulan saf fonksiyon.
 
 ## v0.2 değişiklikleri
@@ -32,3 +32,10 @@ Kullanıcı onayı olmadan değiştirilmez.
 - `kaydir` ve `hamleYap` sonuçlarına `hareketler` eklendi: her taş için `{ kaynak, hedef, birlesti }` (hücre indeksi = satır * 4 + sütun). Hareket etmeyen taşın kaynağı ve hedefi aynı; birleşen iki taşın hedefi aynı. `hamleYap` ayrıca `yeniTas` (yeni taşın indeksi) döndürür; hareketsiz hamlede `hareketler: []`, `yeniTas: null`. Tahta temsili (0 ve 1..10) değişmedi.
 - `js/ekran.js`: taşlar sabit konumlu elementler, konum `--r`/`--c` ile `transform: translate`. Hücre boyutu CSS'ten (`--aralik`), piksel yok. Kayma ~120 ms ease-out, birleşmede zıplama, yeni taşta beliriş (animasyonlar iç elementte, konumla karışmaz).
 - Animasyon sürerken yeni hamle gelirse eskisi hemen biter, girdi yutulmaz. `prefers-reduced-motion: reduce` açıksa animasyon yok. Kayma süresi `style.css` `--kayma` ve `ekran.js` `KAYMA_MS` ile aynı tutulur.
+
+## v0.4 değişiklikleri (kaldığı yerden devam)
+- Kayıt biçimi (JSON, anahtar `abeceOyunDurumu`): `{ surum: 1, tahta, puan, kazanmaBildirildi }`. Tahta temsili aynı (0 ve 1..10). `bitti` kaydedilmez, tahtadan yeniden hesaplanır.
+- `durumGecerliMi` saf doğrulama yapar: sürüm 1, tahta 4x4, hücreler 0..10 tam sayı, puan negatif olmayan sayı, `kazanmaBildirildi` boolean, tahta tamamen boş değil. Geçersiz ya da bozuk kayıt yok sayılır ve silinir.
+- Açılışta geçerli kayıt varsa oyun oradan kurulur (animasyonsuz çizilir), yoksa yeni oyun başlar. Her geçerli hamleden sonra kayıt yazılır.
+- **Oyun bitince kayıt silinir.** "Yeni oyun" kaydı silip yeni oyun başlatır. En yüksek skor hiçbir durumda sıfırlanmaz.
+- `mantik.js` `durumdanOyunKur(kayit)`: kayıttan oyun durumu kurar.
