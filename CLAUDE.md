@@ -16,4 +16,4 @@ Kullanıcı onayı olmadan değiştirilmez.
 - Tüm renkler `style.css` başında CSS değişkenleri. Taş renkleri A'dan H'ye koyulaşır; harf/zemin kontrastı en az 4.5 (WCAG).
 - Dosyalar `index.html` içinde sade `<script>` ile bağlanır. Yorumlar kısa ve Türkçe.
 - Test: `node test-mantik.js`
-- Git: ana dal `main`, uzak repo/push/tag yok, commit mesajları Türkçe.
+- Git: ana dal `main`, uzak repo ve push yok, etiket (tag) sadece kullanıcı isterse yerel atılır, commit mesajları Türkçe.
