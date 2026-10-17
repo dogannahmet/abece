@@ -21,3 +21,7 @@ function tahtayiCiz(tahtaEl, tahta) {
 function puaniYaz(puanEl, puan) {
   puanEl.textContent = puan;
 }
+
+function enYuksekYaz(enYuksekEl, skor) {
+  enYuksekEl.textContent = skor;
+}

@@ -45,6 +45,7 @@ h1 { margin: 0 0 12px; font-size: 2rem; letter-spacing: 0.04em; }
   justify-content: space-between;
   margin-bottom: 12px;
 }
+.puanlar { display: flex; flex-direction: column; gap: 2px; }
 .puan { font-size: 1.1rem; color: var(--metin-yumusak); }
 .puan strong { color: var(--metin); font-size: 1.4rem; }
 

@@ -8,12 +8,16 @@ const YONLER = {
 
 const tahtaEl = document.getElementById("tahta");
 const puanEl = document.getElementById("puan");
+const enYuksekEl = document.getElementById("en-yuksek");
 const mesajEl = document.getElementById("mesaj");
+const skorDeposu = skorDeposuKur(); // en yüksek skor (yeni oyun sıfırlamaz)
 let durum;
 
 function goster() {
   tahtayiCiz(tahtaEl, durum.tahta);
   puaniYaz(puanEl, durum.puan);
+  // Puan rekoru geçince canlı güncellenir ve depoya yazılır
+  enYuksekYaz(enYuksekEl, skorDeposu.guncelle(durum.puan));
 }
 
 function yeniOyunBaslat() {
