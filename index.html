@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abece</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="oyun">
+    <h1>Abece</h1>
+    <div class="ust">
+      <div class="puan">Puan <strong id="puan">0</strong></div>
+      <button id="yeni-oyun" type="button">Yeni oyun</button>
+    </div>
+    <div id="tahta" class="tahta" aria-label="Oyun tahtası"></div>
+    <p id="mesaj" class="mesaj" aria-live="polite"></p>
+    <p class="yardim">Ok tuşlarıyla oyna. Aynı harften ikisini birleştirip bir sonraki harfe büyüt.</p>
+  </main>
+  <script src="js/mantik.js"></script>
+  <script src="js/ekran.js"></script>
+  <script src="js/oyun.js"></script>
+</body>
+</html>
