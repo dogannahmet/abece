@@ -39,3 +39,8 @@ Kullanıcı onayı olmadan değiştirilmez.
 - Açılışta geçerli kayıt varsa oyun oradan kurulur (animasyonsuz çizilir), yoksa yeni oyun başlar. Her geçerli hamleden sonra kayıt yazılır.
 - **Oyun bitince kayıt silinir.** "Yeni oyun" kaydı silip yeni oyun başlatır. En yüksek skor hiçbir durumda sıfırlanmaz.
 - `mantik.js` `durumdanOyunKur(kayit)`: kayıttan oyun durumu kurar.
+
+## Yayın
+- Canlı adres: https://dogannahmet.github.io/abece/ (GitHub Pages, `main` dalı).
+- `main`'e push edilince GitHub Pages bir iki dakika içinde güncellenir.
+- `docs/` klasörü sadece README'nin görsellerini tutar (`docs/ekran.png`, 800 px geniş, 300 KB altı); oyun koduyla ilgisi yok.
