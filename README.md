@@ -6,15 +6,19 @@
 `index.html` dosyasına çift tıkla. Kurulum ve kütüphane yok.
 
 ## Nasıl oynanır
-Ok tuşlarıyla taşları kaydır. Aynı harften ikisi çarpışınca bir sonraki harfe dönüşür. H'ye ulaşırsan kazanırsın, istersen devam edebilirsin. Tahta dolar ve birleşme kalmazsa oyun biter.
+Ok tuşlarıyla ya da telefonda parmağınla kaydırarak taşları oynat. Aynı harften ikisi çarpışınca bir sonraki harfe dönüşür. H'ye ulaşırsan kazanırsın, istersen devam edebilirsin. Tahta dolar ve birleşme kalmazsa oyun biter.
 
 ## Dosyalar
 - `js/mantik.js`: tahta kuralları (sayılarla çalışır)
 - `js/ekran.js`: tahtayı çizer, sayıyı harfe çevirir
-- `js/oyun.js`: tuşlar, puan ve düğme
-- `test-mantik.js`: mantık testleri
+- `js/oyun.js`: tuşlar, dokunmatik kaydırma, puan ve düğme
+- `js/depo.js`: en yüksek skoru tarayıcıda saklar
+- `js/girdi.js`: kaydırma yönünü bulur
+- `test-mantik.js`, `test-depo.js`, `test-girdi.js`: testler
 
 ## Test
 ```
 node test-mantik.js
+node test-depo.js
+node test-girdi.js
 ```
