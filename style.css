@@ -68,6 +68,7 @@ button:focus-visible { outline: 3px solid var(--kenar-a); outline-offset: 2px; }
   padding: 8px;
   border-radius: 12px;
   background: var(--tahta);
+  touch-action: none; /* kaydırırken sayfa kaymasın */
 }
 
 .hucre {
