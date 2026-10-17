@@ -1,1 +1,101 @@
-/* Abece stilleri (sonra doldurulacak) */
+/* Tüm renkler burada, değişken olarak. Taş renkleri A'dan H'ye koyulaşır. */
+:root {
+  --sayfa: #FBF7F0;
+  --metin: #3A3025;
+  --metin-yumusak: #6B5F50;
+  --tahta: #E3D6BF;
+  --bos-hucre: #CDBEA2;
+  --dugme: #3A3025;
+  --dugme-yazi: #FBF7F0;
+  --kenar-a: #C9A93A; /* A taşını tahtadan ayıran ince kenar */
+  --golge: rgba(58, 48, 37, 0.28);
+
+  --a-zemin: #FBE9A0; --a-harf: #3B2A00;
+  --b-zemin: #FAC9A0; --b-harf: #3B1E00;
+  --c-zemin: #F6A978; --c-harf: #3A1800;
+  --cc-zemin: #E98A3C; --cc-harf: #2A1000;
+  --d-zemin: #E8705A; --d-harf: #2E0E08;
+  --e-zemin: #C8352E; --e-harf: #FFFFFF;
+  --f-zemin: #B3205F; --f-harf: #FFFFFF;
+  --g-zemin: #6E3A8C; --g-harf: #FFFFFF;
+  --gg-zemin: #2E3A8C; --gg-harf: #FFFFFF;
+  --h-zemin: #1B1730; --h-harf: #F2C14E;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--sayfa);
+  color: var(--metin);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.oyun {
+  width: min(100% - 24px, 420px);
+  margin: 0 auto;
+  padding: 16px 0 32px;
+}
+
+h1 { margin: 0 0 12px; font-size: 2rem; letter-spacing: 0.04em; }
+
+.ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.puan { font-size: 1.1rem; color: var(--metin-yumusak); }
+.puan strong { color: var(--metin); font-size: 1.4rem; }
+
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--dugme);
+  color: var(--dugme-yazi);
+  cursor: pointer;
+}
+button:focus-visible { outline: 3px solid var(--kenar-a); outline-offset: 2px; }
+
+.tahta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--tahta);
+}
+
+.hucre {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--bos-hucre);
+  font-size: clamp(1.8rem, 11vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.4; /* Ç ve Ğ'nin işaretleri kesilmesin */
+  overflow: visible;
+}
+
+/* Dolu taşlar: ince kenar + gölge ile boş hücreden ve tahtadan ayrılır */
+.hucre.tas {
+  box-shadow: 0 2px 4px var(--golge), inset 0 0 0 1px rgba(58, 48, 37, 0.18);
+}
+.hucre.a1  { background: var(--a-zemin);  color: var(--a-harf);  box-shadow: 0 2px 4px var(--golge), inset 0 0 0 2px var(--kenar-a); }
+.hucre.a2  { background: var(--b-zemin);  color: var(--b-harf); }
+.hucre.a3  { background: var(--c-zemin);  color: var(--c-harf); }
+.hucre.a4  { background: var(--cc-zemin); color: var(--cc-harf); }
+.hucre.a5  { background: var(--d-zemin);  color: var(--d-harf); }
+.hucre.a6  { background: var(--e-zemin);  color: var(--e-harf); }
+.hucre.a7  { background: var(--f-zemin);  color: var(--f-harf); }
+.hucre.a8  { background: var(--g-zemin);  color: var(--g-harf); }
+.hucre.a9  { background: var(--gg-zemin); color: var(--gg-harf); }
+.hucre.a10 { background: var(--h-zemin);  color: var(--h-harf); }
+
+.mesaj { min-height: 1.5em; margin: 12px 0 0; font-weight: 700; }
+.yardim { margin: 8px 0 0; color: var(--metin-yumusak); line-height: 1.4; }
