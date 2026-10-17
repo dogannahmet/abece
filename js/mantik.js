@@ -5,26 +5,38 @@ const BOYUT = 4;
 const ASAMA_SAYISI = 10; // tek yerden okunur: en üst aşama (H)
 
 // Aynı satırı sola kaydır ve birleştir. Bir taş en fazla bir kez birleşir.
+// hedefler[k]: k. konumdaki taşın gittiği konum (boşsa null), birlesti[k]: birleşmeye girdi mi
 function satiriSolaKaydir(satir) {
-  const taslar = satir.filter((x) => x !== 0);
   const sonuc = [];
+  const hedefler = new Array(satir.length).fill(null);
+  const birlesti = new Array(satir.length).fill(false);
   let puan = 0;
   let enUst = false;
-  for (let i = 0; i < taslar.length; i++) {
-    const bu = taslar[i];
-    // En üst aşama (H) kendi içinde birleşmez
-    if (i + 1 < taslar.length && taslar[i + 1] === bu && bu < ASAMA_SAYISI) {
+  let onceki = -1; // son taşın konumu (sonuc içinde), birleşmeye açıksa
+  let oncekiAcik = false;
+  for (let k = 0; k < satir.length; k++) {
+    const bu = satir[k];
+    if (bu === 0) continue;
+    // Bir önceki taşla aynıysa ve henüz birleşmediyse birleş (H hariç)
+    if (oncekiAcik && sonuc[onceki] === bu && bu < ASAMA_SAYISI) {
       const yeni = bu + 1;
-      sonuc.push(yeni);
+      sonuc[onceki] = yeni;
+      hedefler[k] = onceki;
+      birlesti[k] = true;
+      // önceki taşı geriye dönük işaretle
+      for (let j = 0; j < k; j++) if (hedefler[j] === onceki) birlesti[j] = true;
       puan += 2 ** yeni; // puan: 2 üzeri yeni aşama numarası
       if (yeni === ASAMA_SAYISI) enUst = true;
-      i++; // eşi tüketildi, tekrar birleşemez
+      oncekiAcik = false; // yeni oluşan taş tekrar birleşemez
     } else {
       sonuc.push(bu);
+      onceki = sonuc.length - 1;
+      hedefler[k] = onceki;
+      oncekiAcik = true;
     }
   }
-  while (sonuc.length < BOYUT) sonuc.push(0);
-  return { satir: sonuc, puan, enUst };
+  while (sonuc.length < satir.length) sonuc.push(0);
+  return { satir: sonuc, puan, enUst, hedefler, birlesti };
 }
 
 // Yön için i. çizgiyi duvara doğru (kaydırma sırasıyla) oku/yaz
@@ -45,8 +57,11 @@ function bosTahta() {
 }
 
 // Tahtayı bir yöne kaydırır; girdiyi değiştirmez, yeni tahta döner.
+// hareketler: her taş için { kaynak, hedef, birlesti } (hücre indeksi = satır * BOYUT + sütun).
+// Yerinde kalan taşın kaynağı ve hedefi aynıdır. Birleşen iki taşın hedefi aynıdır.
 function kaydir(tahta, yon) {
   const yeni = bosTahta();
+  const hareketler = [];
   let puan = 0;
   let hareket = false;
   let enUstOlustu = false;
@@ -58,9 +73,16 @@ function kaydir(tahta, yon) {
     hucreler.forEach(([r, c], k) => {
       yeni[r][c] = sonuc.satir[k];
       if (yeni[r][c] !== tahta[r][c]) hareket = true;
+      if (sonuc.hedefler[k] === null) return; // boş hücre
+      const [hr, hc] = hucreler[sonuc.hedefler[k]];
+      hareketler.push({
+        kaynak: r * BOYUT + c,
+        hedef: hr * BOYUT + hc,
+        birlesti: sonuc.birlesti[k],
+      });
     });
   }
-  return { tahta: yeni, puan, hareket, enUstOlustu };
+  return { tahta: yeni, puan, hareket, enUstOlustu, hareketler };
 }
 
 // Boş bir hücreye yeni taş koyar: %90 A (1), %10 B (2). Yer yoksa null.
@@ -74,7 +96,7 @@ function yeniTasEkle(tahta, rastgele = Math.random) {
   const deger = rastgele() < 0.9 ? 1 : 2;
   const kopya = tahta.map((s) => s.slice());
   kopya[r][c] = deger;
-  return { tahta: kopya, konum: [r, c], deger };
+  return { tahta: kopya, konum: [r, c], indeks: r * BOYUT + c, deger };
 }
 
 // Tahta dolu ve hiçbir yönde birleşme yoksa oyun biter.
@@ -91,12 +113,14 @@ function yeniOyun(rastgele = Math.random) {
 }
 
 // Bir hamle yapar ve durumu günceller. Hiçbir taş oynamadıysa hiçbir şey olmaz.
-// Dönüş: { hareket, kazanmaYeni } (kazanma sadece ilk H'de bir kez bildirilir)
+// Dönüş: { hareket, kazanmaYeni, hareketler, yeniTas }
+// (kazanma sadece ilk H'de bir kez bildirilir; yeniTas yeni düşen taşın hücre indeksi)
 function hamleYap(durum, yon, rastgele = Math.random) {
-  if (durum.bitti) return { hareket: false, kazanmaYeni: false };
+  if (durum.bitti) return { hareket: false, kazanmaYeni: false, hareketler: [], yeniTas: null };
   const s = kaydir(durum.tahta, yon);
-  if (!s.hareket) return { hareket: false, kazanmaYeni: false };
-  durum.tahta = yeniTasEkle(s.tahta, rastgele).tahta;
+  if (!s.hareket) return { hareket: false, kazanmaYeni: false, hareketler: [], yeniTas: null };
+  const yeniTas = yeniTasEkle(s.tahta, rastgele);
+  durum.tahta = yeniTas.tahta;
   durum.puan += s.puan;
   let kazanmaYeni = false;
   if (s.enUstOlustu && !durum.kazandi) {
@@ -104,7 +128,7 @@ function hamleYap(durum, yon, rastgele = Math.random) {
     kazanmaYeni = true;
   }
   durum.bitti = bittiMi(durum.tahta);
-  return { hareket: true, kazanmaYeni };
+  return { hareket: true, kazanmaYeni, hareketler: s.hareketler, yeniTas: yeniTas.indeks };
 }
 
 // Node'da test için dışa aktar; tarayıcıda module yoktur, atlanır.

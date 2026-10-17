@@ -27,3 +27,8 @@ Kullanıcı onayı olmadan değiştirilmez.
 - En yüksek skor puanın yanında; "Yeni oyun" onu sıfırlamaz.
 - Dokunmatik kaydırma (eşik 30 px, tek parmak, tahtada `touch-action: none`).
 - Taş renkleri yeniden ayarlandı: komşu taşlar arası CIE L* farkı en az 6 (şu an 7.8), WCAG 4.5 geçerli.
+
+## v0.3 değişiklikleri (animasyon)
+- `kaydir` ve `hamleYap` sonuçlarına `hareketler` eklendi: her taş için `{ kaynak, hedef, birlesti }` (hücre indeksi = satır * 4 + sütun). Hareket etmeyen taşın kaynağı ve hedefi aynı; birleşen iki taşın hedefi aynı. `hamleYap` ayrıca `yeniTas` (yeni taşın indeksi) döndürür; hareketsiz hamlede `hareketler: []`, `yeniTas: null`. Tahta temsili (0 ve 1..10) değişmedi.
+- `js/ekran.js`: taşlar sabit konumlu elementler, konum `--r`/`--c` ile `transform: translate`. Hücre boyutu CSS'ten (`--aralik`), piksel yok. Kayma ~120 ms ease-out, birleşmede zıplama, yeni taşta beliriş (animasyonlar iç elementte, konumla karışmaz).
+- Animasyon sürerken yeni hamle gelirse eskisi hemen biter, girdi yutulmaz. `prefers-reduced-motion: reduce` açıksa animasyon yok. Kayma süresi `style.css` `--kayma` ve `ekran.js` `KAYMA_MS` ile aynı tutulur.

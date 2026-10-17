@@ -13,11 +13,16 @@ const mesajEl = document.getElementById("mesaj");
 const skorDeposu = skorDeposuKur(); // en yüksek skor (yeni oyun sıfırlamaz)
 let durum;
 
+// Puan ve en yüksek skor; rekor geçilince canlı güncellenir ve depoya yazılır
+function skoruGoster() {
+  puaniYaz(puanEl, durum.puan);
+  enYuksekYaz(enYuksekEl, skorDeposu.guncelle(durum.puan));
+}
+
+// Tahtayı animasyonsuz baştan çizer (yeni oyun, ilk açılış)
 function goster() {
   tahtayiCiz(tahtaEl, durum.tahta);
-  puaniYaz(puanEl, durum.puan);
-  // Puan rekoru geçince canlı güncellenir ve depoya yazılır
-  enYuksekYaz(enYuksekEl, skorDeposu.guncelle(durum.puan));
+  skoruGoster();
 }
 
 function yeniOyunBaslat() {
@@ -30,7 +35,8 @@ function yeniOyunBaslat() {
 function hamleUygula(yon) {
   const sonuc = hamleYap(durum, yon);
   if (!sonuc.hareket) return;
-  goster();
+  hamleyiCiz(tahtaEl, sonuc.hareketler, durum.tahta, sonuc.yeniTas);
+  skoruGoster();
   if (sonuc.kazanmaYeni) mesajEl.textContent = "Tebrikler, H harfine ulaştın! İstersen devam edebilirsin.";
   if (durum.bitti) mesajEl.textContent = "Oyun bitti. Yeni oyun ile tekrar dene.";
 }
