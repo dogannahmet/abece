@@ -15,5 +15,15 @@ Kullanıcı onayı olmadan değiştirilmez.
 - `js/mantik.js` DOM'a ve window'a dokunmaz.
 - Tüm renkler `style.css` başında CSS değişkenleri. Taş renkleri A'dan H'ye koyulaşır; harf/zemin kontrastı en az 4.5 (WCAG).
 - Dosyalar `index.html` içinde sade `<script>` ile bağlanır. Yorumlar kısa ve Türkçe.
-- Test: `node test-mantik.js`
-- Git: ana dal `main`, uzak repo ve push yok, etiket (tag) sadece kullanıcı isterse yerel atılır, commit mesajları Türkçe.
+- Test: `node test-mantik.js`, `node test-depo.js`, `node test-girdi.js`
+- Git: ana dal `main`, commit mesajları Türkçe. Etiket ve push sadece ben açıkça isteyince.
+
+## Dosyalar
+- `js/mantik.js` kurallar, `js/ekran.js` çizim, `js/oyun.js` bağlantı (klavye + dokunmatik).
+- `js/depo.js` en yüksek skor (localStorage, anahtar `abeceEnYuksekSkor`). Depolama dışarıdan verilir; hata olursa skor bellekte tutulur. Oyun kurallarını bilmez.
+- `js/girdi.js` `yonBul(dx, dy, esik)`: kaydırma yönünü bulan saf fonksiyon.
+
+## v0.2 değişiklikleri
+- En yüksek skor puanın yanında; "Yeni oyun" onu sıfırlamaz.
+- Dokunmatik kaydırma (eşik 30 px, tek parmak, tahtada `touch-action: none`).
+- Taş renkleri yeniden ayarlandı: komşu taşlar arası CIE L* farkı en az 6 (şu an 7.8), WCAG 4.5 geçerli.
